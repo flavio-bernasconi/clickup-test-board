@@ -8,9 +8,18 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       return { props: { data: "no session" } };
 
     const query = new URLSearchParams({ archived: "false" }).toString();
-    const spaceId = "9015346889";
+    const spaceId = "9015347454";
     const resp = await fetch(
-      `https://api.clickup.com/api/v2/space/${spaceId}/folder?${query}`,
+      `https://api.clickup.com/api/v2/folder/90151630703`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: (session as any)?.accessToken,
+        },
+      }
+    );
+    const listFetch = await fetch(
+      `https://api.clickup.com/api/v2/list/901502619596`,
       {
         method: "GET",
         headers: {
@@ -19,8 +28,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       }
     );
 
+    const userFetch = await fetch(`https://api.clickup.com/api/v2/team`, {
+      method: "GET",
+      headers: {
+        Authorization: (session as any)?.accessToken,
+      },
+    });
+
     const data = await resp.json();
-    return { props: { data } };
+    const user = await userFetch.json();
+    const list = await listFetch.json();
+    return { props: { data: [user, list, data] } };
   } catch (error) {
     console.log(error);
     return { props: { data: error } };
@@ -44,7 +62,11 @@ export default function Home({
       <>
         <p>Signed in as {userName}</p>
         <button onClick={() => signOut()}>Sign out</button>
-        <h1>{JSON.stringify(data, undefined, 2)}</h1>
+        {(data as any)?.map((datum: string, i: number) => (
+          <p key={i} className="mb-5">
+            {JSON.stringify(datum)}
+          </p>
+        ))}
       </>
     );
   }

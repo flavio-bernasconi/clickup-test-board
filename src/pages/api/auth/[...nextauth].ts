@@ -3,7 +3,7 @@ import ClickUp from "@auth/core/providers/click-up";
 
 export const authOptions = {
   callbacks: {
-    async jwt({ token, account }) {
+    async jwt({ token, account, ...arg }) {
       if (account) {
         token.accessToken = account["access_token"];
       }
