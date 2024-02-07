@@ -8,13 +8,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       return { props: { data: "no session" } };
 
     const query = new URLSearchParams({ archived: "false" }).toString();
-    const spaceId = "90151432148";
+    const spaceId = "9015346889";
     const resp = await fetch(
       `https://api.clickup.com/api/v2/space/${spaceId}/folder?${query}`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${(session as any)?.accessToken}`,
+          Authorization: (session as any)?.accessToken,
         },
       }
     );
