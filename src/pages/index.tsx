@@ -2,11 +2,13 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useSession, getSession, signIn, signOut } from "next-auth/react";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  const session = await getSession(ctx);
-  const query = new URLSearchParams({ archived: "false" }).toString();
-  console.log({ session });
-  const spaceId = "90151432148";
   try {
+    const session = await getSession(ctx);
+    if (!session && (session as any)?.accessToken)
+      return { props: { data: "no session" } };
+
+    const query = new URLSearchParams({ archived: "false" }).toString();
+    const spaceId = "90151432148";
     const resp = await fetch(
       `https://api.clickup.com/api/v2/space/${spaceId}/folder?${query}`,
       {
@@ -28,8 +30,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 export default function Home({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log({ data });
   const { data: session, status } = useSession();
+  console.log({ data });
+  console.log({ session });
   const userName = session?.user?.name;
 
   if (status === "loading") {
