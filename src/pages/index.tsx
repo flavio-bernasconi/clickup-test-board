@@ -14,7 +14,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       {
         method: "GET",
         headers: {
-          Authorization: `${(session as any)?.accessToken}`,
+          Authorization: `Bearer ${(session as any)?.accessToken}`,
         },
       }
     );
