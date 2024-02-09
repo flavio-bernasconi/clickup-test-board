@@ -1,6 +1,8 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useSession, getSession, signIn, signOut } from "next-auth/react";
 
+import Board from "@/components/Board";
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   try {
     const session = await getSession(ctx);
@@ -20,21 +22,33 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       }
     );
 
+    const listId = "901502626063";
+    const listFetched = await fetch(
+      `https://api.clickup.com/api/v2/list/${listId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: (session as any)?.accessToken,
+        },
+      }
+    );
+
+    const list = await listFetched.json();
+
     const data = await resp.json();
-    return { props: { data } };
+    return { props: { data, statuses: list.statuses } };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return { props: { data: error } };
   }
 }
 
 export default function Home({
   data,
+  statuses,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
-
-  console.log({ data });
 
   if (status === "loading") {
     return <p>Hang on there...</p>;
@@ -42,25 +56,58 @@ export default function Home({
 
   if (status === "authenticated") {
     return (
-      <>
+      <div className="p-12">
         <p>Signed in as {userName}</p>
         <button onClick={() => signOut()}>Sign out</button>
         <div className="mt-20" />
         {data.tasks.map((us: any) => {
+          const group = statuses.reduce((acc, { status, id }, i) => {
+            acc[us.id + id] = {
+              title: status,
+              items: us.subtasks.filter(
+                (task) => task.status.status === status
+              ),
+            };
+            return acc;
+          }, {});
+
           return (
-            <div key={us.id} className="mt-5">
+            <div key={us.id} className="mt-12">
               <h1>{us.name}</h1>
-              {us.subtasks.map((task: any) => {
+              <Board data={group} />
+
+              {/* {us.subtasks.map((task: any) => {
                 return (
-                  <div className="ml-5" key={task.id}>
-                    <h3>{task.name}</h3>
+                  <div className="ml-4 mt-4" key={task.id}>
+                    <h3>
+                      {task.name} -{" "}
+                      <span
+                        style={{ background: task.status.color, padding: 5 }}
+                      >
+                        {task.status.status}
+                      </span>
+                    </h3>
+                    <select
+                      onChange={(e) => {
+                        updateTask({
+                          id: task.id,
+                          status: e.currentTarget.value,
+                        });
+                      }}
+                    >
+                      {statuses.map((option: any) => (
+                        <option key={option.id} value={option.status}>
+                          {option.status}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 );
-              })}
+              })} */}
             </div>
           );
         })}
-      </>
+      </div>
     );
   }
 
