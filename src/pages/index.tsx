@@ -7,38 +7,21 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     if (!session && (session as any)?.accessToken)
       return { props: { data: "no session" } };
 
-    const query = new URLSearchParams({ archived: "false" }).toString();
-    const spaceId = "9015347454";
-    const resp = await fetch(
-      `https://api.clickup.com/api/v2/folder/90151630703`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: (session as any)?.accessToken,
-        },
-      }
-    );
-    const listFetch = await fetch(
-      `https://api.clickup.com/api/v2/list/901502619596`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: (session as any)?.accessToken,
-        },
-      }
-    );
+    const queryView = new URLSearchParams({ page: "0" }).toString();
 
-    const userFetch = await fetch(`https://api.clickup.com/api/v2/team`, {
-      method: "GET",
-      headers: {
-        Authorization: (session as any)?.accessToken,
-      },
-    });
+    const viewId = "6-901502626063-1";
+    const resp = await fetch(
+      `https://api.clickup.com/api/v2/view/${viewId}/task?${queryView}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: (session as any)?.accessToken,
+        },
+      }
+    );
 
     const data = await resp.json();
-    const user = await userFetch.json();
-    const list = await listFetch.json();
-    return { props: { data: [user, list, data] } };
+    return { props: { data } };
   } catch (error) {
     console.log(error);
     return { props: { data: error } };
@@ -49,9 +32,9 @@ export default function Home({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session, status } = useSession();
-  console.log({ data });
-  console.log({ session });
   const userName = session?.user?.name;
+
+  console.log({ data });
 
   if (status === "loading") {
     return <p>Hang on there...</p>;
@@ -62,11 +45,21 @@ export default function Home({
       <>
         <p>Signed in as {userName}</p>
         <button onClick={() => signOut()}>Sign out</button>
-        {(data as any)?.map((datum: string, i: number) => (
-          <p key={i} className="mb-5">
-            {JSON.stringify(datum)}
-          </p>
-        ))}
+        <div className="mt-20" />
+        {data.tasks.map((us: any) => {
+          return (
+            <div key={us.id} className="mt-5">
+              <h1>{us.name}</h1>
+              {us.subtasks.map((task: any) => {
+                return (
+                  <div className="ml-5" key={task.id}>
+                    <h3>{task.name}</h3>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </>
     );
   }
