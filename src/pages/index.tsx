@@ -61,11 +61,11 @@ export default function Home({
         <button onClick={() => signOut()}>Sign out</button>
         <div className="mt-20" />
         {data.tasks.map((us: any) => {
-          const group = statuses.reduce((acc, { status, id }, i) => {
+          const group = statuses.reduce((acc: any, { status, id }: any) => {
             acc[us.id + id] = {
               title: status,
               items: us.subtasks.filter(
-                (task) => task.status.status === status
+                (task: any) => task.status.status === status
               ),
             };
             return acc;
