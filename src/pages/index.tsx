@@ -50,7 +50,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
       const list = await listFetched.json();
 
-      return { props: { data, statuses: list.statuses } };
+      return { props: { data, statuses: list.statuses, listName: list.name } };
     } else {
       return { props: { data: [], statuses: [] } };
     }
@@ -63,6 +63,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 const Grid = styled.div`
   display: flex;
   gap: 50px;
+  align-items: flex-start;
 `;
 const Scrollable = styled.div`
   display: flex;
@@ -70,8 +71,10 @@ const Scrollable = styled.div`
 `;
 
 const Us = styled.div`
+  position: sticky;
+  top: 20px;
   min-height: 20vh;
-  background-color: #afafaf;
+  background-color: #d6def6;
   min-width: 300px;
   display: flex;
   flex-direction: column;
@@ -95,10 +98,14 @@ const Column = styled.div`
   gap: 3px;
   padding: 12px;
 `;
+const EmptyColumn = styled(Column)`
+  background-color: transparent;
+`;
 
 export default function Home({
   data,
   statuses,
+  listName,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [winReady, setwinReady] = useState(false);
   const [urlLocation, setUrl] = useState("");
@@ -126,15 +133,17 @@ export default function Home({
   // if (status === "authenticated") {
   return (
     <div className="p-12">
-      <h2>URL:{urlLocation}</h2>
+      <h2 style={{ fontSize: "4rem" }}>{listName}</h2>
       {/* <p>Signed in as {userName}</p> */}
       {/* <button onClick={() => signOut()}>Sign out</button> */}
       <div className="mt-20" />
       <div style={{ position: "relative" }}>
         <StatusRow>
-          <Column />
+          <EmptyColumn />
           {statuses.map((status: any, i: number) => (
-            <Column key={status.id + i}>{status.status}</Column>
+            <Column key={status.id + i} style={{ background: status.color }}>
+              {status.status}
+            </Column>
           ))}
         </StatusRow>
 
@@ -154,9 +163,7 @@ export default function Home({
               <Us>
                 <h1>{us.name}</h1>
               </Us>
-              {/* <Scrollable> */}
               {winReady && group && <Board data={group} />}
-              {/* </Scrollable> */}
             </Grid>
           );
         })}
