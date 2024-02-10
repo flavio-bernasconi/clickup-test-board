@@ -102,7 +102,6 @@ const Kanban = ({ data }) => {
               <Droppable key={columnId} droppableId={columnId}>
                 {(provided, snapshot) => (
                   <Column ref={provided.innerRef} {...provided.droppableProps}>
-                    <span>{column.title}</span>
                     {column.items.map((item, index) => (
                       <TaskCard key={item.id} item={item} index={index} />
                     ))}

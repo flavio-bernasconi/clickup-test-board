@@ -67,7 +67,24 @@ const Grid = styled.div`
 
 const Us = styled.div`
   min-height: 20vh;
-  background-color: #747474;
+  background-color: #afafaf;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px;
+`;
+
+const StatusRow = styled.div`
+  position: sticky;
+  top: 0;
+  display: flex;
+  gap: 50px;
+`;
+
+const Column = styled.div`
+  height: 50px;
+  background-color: #e7e7e7;
   min-width: 300px;
   display: flex;
   flex-direction: column;
@@ -107,26 +124,37 @@ export default function Home({
       {/* <p>Signed in as {userName}</p> */}
       {/* <button onClick={() => signOut()}>Sign out</button> */}
       <div className="mt-20" />
-      {data?.tasks?.map((us: any) => {
-        const group = statuses.reduce((acc: any, { status, id }: any) => {
-          acc[us.id + id] = {
-            title: status,
-            items: us.subtasks.filter(
-              (task: any) => task.status.status === status
-            ),
-          };
-          return acc;
-        }, {});
+      <div style={{ position: "relative" }}>
+        <StatusRow>
+          <Column />
+          {statuses.map((status: any) => (
+            <Column key={status.id}>{status.status}</Column>
+          ))}
+        </StatusRow>
 
-        return (
-          <Grid key={us.id} className="mt-12">
-            <Us>
-              <h1>{us.name}</h1>
-            </Us>
-            {winReady && group && <Board data={group} />}
-          </Grid>
-        );
-      })}
+        {data?.tasks?.map((us: any) => {
+          const group = statuses.reduce((acc: any, { status, id }: any) => {
+            acc[us.id + id] = {
+              title: status,
+              items: us.subtasks.filter(
+                (task: any) => task.status.status === status
+              ),
+            };
+            return acc;
+          }, {});
+
+          return (
+            <>
+              <Grid key={us.id} className="mt-12">
+                <Us>
+                  <h1>{us.name}</h1>
+                </Us>
+                {winReady && group && <Board data={group} />}
+              </Grid>
+            </>
+          );
+        })}
+      </div>
     </div>
   );
   // }
