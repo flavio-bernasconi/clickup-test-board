@@ -65,9 +65,9 @@ const Grid = styled.div`
   gap: 50px;
 `;
 
-const Column = styled.div`
-  min-height: 50vh;
-  border: solid 3px #5e5e5e;
+const Us = styled.div`
+  min-height: 20vh;
+  background-color: #747474;
   min-width: 300px;
   display: flex;
   flex-direction: column;
@@ -120,9 +120,9 @@ export default function Home({
 
         return (
           <Grid key={us.id} className="mt-12">
-            <Column>
+            <Us>
               <h1>{us.name}</h1>
-            </Column>
+            </Us>
             {winReady && group && <Board data={group} />}
           </Grid>
         );
