@@ -154,9 +154,9 @@ export default function Home({
               <Us>
                 <h1>{us.name}</h1>
               </Us>
-              <Scrollable>
-                {winReady && group && <Board data={group} />}
-              </Scrollable>
+              {/* <Scrollable> */}
+              {winReady && group && <Board data={group} />}
+              {/* </Scrollable> */}
             </Grid>
           );
         })}
