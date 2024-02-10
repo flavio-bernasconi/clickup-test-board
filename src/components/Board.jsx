@@ -8,19 +8,17 @@ const Kanban = ({ data }) => {
   const { data: session, status } = useSession();
 
   const updateTask = async ({ status, id }) => {
-    const resp = await fetch(`https://api.clickup.com/api/v2/task/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: session?.accessToken,
-      },
-      body: JSON.stringify({
-        status,
-      }),
-    });
     try {
-      const data = await resp.json();
-      console.log("UPDATE OK");
+      await fetch(`api/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session?.accessToken,
+        },
+        body: JSON.stringify({
+          status,
+        }),
+      });
     } catch (error) {
       console.log(error);
     }
