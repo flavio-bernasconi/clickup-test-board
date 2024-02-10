@@ -64,6 +64,10 @@ const Grid = styled.div`
   display: flex;
   gap: 50px;
 `;
+const Scrollable = styled.div`
+  display: flex;
+  overflow: auto;
+`;
 
 const Us = styled.div`
   min-height: 20vh;
@@ -117,6 +121,8 @@ export default function Home({
   if (!data || data?.tasks?.length === 0 || statuses.length === 0)
     return <p>no data found something is wrong</p>;
 
+  if (!winReady) return <p>loading</p>;
+
   // if (status === "authenticated") {
   return (
     <div className="p-12">
@@ -127,8 +133,8 @@ export default function Home({
       <div style={{ position: "relative" }}>
         <StatusRow>
           <Column />
-          {statuses.map((status: any) => (
-            <Column key={status.id}>{status.status}</Column>
+          {statuses.map((status: any, i: number) => (
+            <Column key={status.id + i}>{status.status}</Column>
           ))}
         </StatusRow>
 
@@ -144,14 +150,14 @@ export default function Home({
           }, {});
 
           return (
-            <>
-              <Grid key={us.id} className="mt-12">
-                <Us>
-                  <h1>{us.name}</h1>
-                </Us>
+            <Grid key={us.id} className="mt-12">
+              <Us>
+                <h1>{us.name}</h1>
+              </Us>
+              <Scrollable>
                 {winReady && group && <Board data={group} />}
-              </Grid>
-            </>
+              </Scrollable>
+            </Grid>
           );
         })}
       </div>
