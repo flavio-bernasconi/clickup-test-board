@@ -85,7 +85,8 @@ const Grid = styled.div`
 
 const Us = styled.div`
   position: sticky;
-  top: 20px;
+  top: 50px;
+  left: 20px;
   min-height: 20vh;
   background-color: #d6def6;
   min-width: 300px;
@@ -108,6 +109,8 @@ const StatusColumn = styled.div`
   min-width: 300px;
   height: 50px;
   gap: 10px;
+  background-color: white;
+  box-shadow: -2px 3px 15px #c3c3c3;
 `;
 
 const Column = styled.div`
@@ -153,7 +156,7 @@ export default function Home({
 
   // if (status === "authenticated") {
   return (
-    <div className="p-12" style={{ overflow: "scroll" }}>
+    <div className="p-12">
       <h2 style={{ fontSize: "4rem" }}>{listName}</h2>
       {/* <p>Signed in as {userName}</p> */}
       {/* <button onClick={() => signOut()}>Sign out</button> */}
