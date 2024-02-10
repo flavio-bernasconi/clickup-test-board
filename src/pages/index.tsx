@@ -66,9 +66,9 @@ const Grid = styled.div`
 `;
 
 const Column = styled.div`
-  height: 50vh;
-  border: solid 2px #d0d0d0;
-  width: 300px;
+  min-height: 50vh;
+  border: solid 3px #5e5e5e;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   gap: 3px;
