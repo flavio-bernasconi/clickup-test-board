@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useSession, getSession, signIn, signOut } from "next-auth/react";
+import styled from "styled-components";
 
 // import Board from "@/components/Board";
 import dynamic from "next/dynamic";
@@ -42,6 +43,21 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   }
 }
 
+const Grid = styled.div`
+  display: flex;
+  gap: 50px;
+`;
+
+const Column = styled.div`
+  height: 50vh;
+  border: solid 2px #d0d0d0;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px;
+`;
+
 export default function Home({
   data,
   statuses,
@@ -61,7 +77,7 @@ export default function Home({
   return (
     <div className="p-12">
       {/* <p>Signed in as {userName}</p> */}
-      <button onClick={() => signOut()}>Sign out</button>
+      {/* <button onClick={() => signOut()}>Sign out</button> */}
       <div className="mt-20" />
       {data.tasks.map((us: any) => {
         const group = statuses.reduce((acc: any, { status, id }: any) => {
@@ -75,10 +91,12 @@ export default function Home({
         }, {});
 
         return (
-          <div key={us.id} className="mt-12">
-            <h1>{us.name}</h1>
+          <Grid key={us.id} className="mt-12">
+            <Column>
+              <h1>{us.name}</h1>
+            </Column>
             {winReady && group && <Board data={group} />}
-          </div>
+          </Grid>
         );
       })}
     </div>

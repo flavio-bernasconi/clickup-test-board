@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskCard from "./TaskCard";
+import styled from "styled-components";
+
+const Grid = styled.div`
+  display: flex;
+  gap: 50px;
+`;
+
+const Column = styled.div`
+  height: 50vh;
+  border: solid 2px #d0d0d0;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px;
+`;
 
 const Kanban = ({ data }) => {
   const [columns, setColumns] = useState(data);
@@ -77,23 +93,23 @@ const Kanban = ({ data }) => {
       onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
     >
       <div>
-        <div>
+        <Grid>
           {Object.entries(columns).map(([columnId, column]) => {
             return (
               <Droppable key={columnId} droppableId={columnId}>
                 {(provided, snapshot) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                  <Column ref={provided.innerRef} {...provided.droppableProps}>
                     <span>{column.title}</span>
                     {column.items.map((item, index) => (
                       <TaskCard key={item.id} item={item} index={index} />
                     ))}
                     {provided.placeholder}
-                  </div>
+                  </Column>
                 )}
               </Droppable>
             );
           })}
-        </div>
+        </Grid>
       </div>
     </DragDropContext>
   );
