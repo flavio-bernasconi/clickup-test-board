@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 
 const Kanban = ({ data }) => {
   const [columns, setColumns] = useState(data);
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
   const updateTask = async ({ status, id }) => {
     try {
@@ -13,7 +13,7 @@ const Kanban = ({ data }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: session?.accessToken,
+          Authorization: "pk_62590589_RSESNQ4AWLBP1F87DQWDHAC5Q3DDQTEO",
         },
         body: JSON.stringify({
           status,

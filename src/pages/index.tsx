@@ -5,10 +5,6 @@ import Board from "@/components/Board";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   try {
-    const session = await getSession(ctx);
-    if (!session && (session as any)?.accessToken)
-      return { props: { data: "no session" } };
-
     const queryView = new URLSearchParams({ page: "0" }).toString();
 
     const viewId = "6-901502626063-1";
@@ -17,7 +13,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       {
         method: "GET",
         headers: {
-          Authorization: (session as any)?.accessToken,
+          Authorization: "pk_62590589_RSESNQ4AWLBP1F87DQWDHAC5Q3DDQTEO",
         },
       }
     );
@@ -28,7 +24,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       {
         method: "GET",
         headers: {
-          Authorization: (session as any)?.accessToken,
+          Authorization: "pk_62590589_RSESNQ4AWLBP1F87DQWDHAC5Q3DDQTEO",
         },
       }
     );
@@ -47,36 +43,36 @@ export default function Home({
   data,
   statuses,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { data: session, status } = useSession();
-  const userName = session?.user?.name;
+  // const { data: session, status } = useSession();
+  // const userName = session?.user?.name;
 
-  if (status === "loading") {
-    return <p>Hang on there...</p>;
-  }
+  // if (status === "loading") {
+  //   return <p>Hang on there...</p>;
+  // }
 
-  if (status === "authenticated") {
-    return (
-      <div className="p-12">
-        <p>Signed in as {userName}</p>
-        <button onClick={() => signOut()}>Sign out</button>
-        <div className="mt-20" />
-        {data.tasks.map((us: any) => {
-          const group = statuses.reduce((acc: any, { status, id }: any) => {
-            acc[us.id + id] = {
-              title: status,
-              items: us.subtasks.filter(
-                (task: any) => task.status.status === status
-              ),
-            };
-            return acc;
-          }, {});
+  // if (status === "authenticated") {
+  return (
+    <div className="p-12">
+      {/* <p>Signed in as {userName}</p> */}
+      <button onClick={() => signOut()}>Sign out</button>
+      <div className="mt-20" />
+      {data.tasks.map((us: any) => {
+        const group = statuses.reduce((acc: any, { status, id }: any) => {
+          acc[us.id + id] = {
+            title: status,
+            items: us.subtasks.filter(
+              (task: any) => task.status.status === status
+            ),
+          };
+          return acc;
+        }, {});
 
-          return (
-            <div key={us.id} className="mt-12">
-              <h1>{us.name}</h1>
-              <Board data={group} />
+        return (
+          <div key={us.id} className="mt-12">
+            <h1>{us.name}</h1>
+            <Board data={group} />
 
-              {/* {us.subtasks.map((task: any) => {
+            {/* {us.subtasks.map((task: any) => {
                 return (
                   <div className="ml-4 mt-4" key={task.id}>
                     <h3>
@@ -104,12 +100,12 @@ export default function Home({
                   </div>
                 );
               })} */}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
+          </div>
+        );
+      })}
+    </div>
+  );
+  // }
 
   return (
     <>
