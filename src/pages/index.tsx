@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 const Board = dynamic(import("@/components/Board"));
 
 const VALID_STATUSES = [
+  "Open",
   "to do",
   "in progress",
   "in review",
