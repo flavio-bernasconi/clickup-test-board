@@ -1,7 +1,10 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useSession, getSession, signIn, signOut } from "next-auth/react";
 
-import Board from "@/components/Board";
+// import Board from "@/components/Board";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+const Board = dynamic(import("@/components/Board"));
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   try {
@@ -43,6 +46,10 @@ export default function Home({
   data,
   statuses,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [winReady, setwinReady] = useState(false);
+  useEffect(() => {
+    setwinReady(true);
+  }, []);
   // const { data: session, status } = useSession();
   // const userName = session?.user?.name;
 
@@ -70,36 +77,7 @@ export default function Home({
         return (
           <div key={us.id} className="mt-12">
             <h1>{us.name}</h1>
-            <Board data={group} />
-
-            {/* {us.subtasks.map((task: any) => {
-                return (
-                  <div className="ml-4 mt-4" key={task.id}>
-                    <h3>
-                      {task.name} -{" "}
-                      <span
-                        style={{ background: task.status.color, padding: 5 }}
-                      >
-                        {task.status.status}
-                      </span>
-                    </h3>
-                    <select
-                      onChange={(e) => {
-                        updateTask({
-                          id: task.id,
-                          status: e.currentTarget.value,
-                        });
-                      }}
-                    >
-                      {statuses.map((option: any) => (
-                        <option key={option.id} value={option.status}>
-                          {option.status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                );
-              })} */}
+            {winReady && group && <Board data={group} />}
           </div>
         );
       })}

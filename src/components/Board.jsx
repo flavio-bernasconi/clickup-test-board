@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import TaskCard from "./TaskCard";
-import { useSession } from "next-auth/react";
 
 const Kanban = ({ data }) => {
   const [columns, setColumns] = useState(data);
@@ -20,7 +19,7 @@ const Kanban = ({ data }) => {
         }),
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -71,13 +70,15 @@ const Kanban = ({ data }) => {
     }
   };
 
+  if (!data) return null;
+
   return (
     <DragDropContext
       onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
     >
       <div>
         <div>
-          {Object.entries(columns).map(([columnId, column], index) => {
+          {Object.entries(columns).map(([columnId, column]) => {
             return (
               <Droppable key={columnId} droppableId={columnId}>
                 {(provided, snapshot) => (
