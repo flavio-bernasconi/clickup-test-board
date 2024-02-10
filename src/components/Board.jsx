@@ -9,7 +9,7 @@ const Grid = styled.div`
 `;
 
 const Column = styled.div`
-  height: 50vh;
+  min-height: 50vh;
   border: solid 2px #d0d0d0;
   width: 300px;
   display: flex;
@@ -24,7 +24,7 @@ const Kanban = ({ data }) => {
 
   const updateTask = async ({ status, id }) => {
     try {
-      await fetch(`api/update/${id}`, {
+      return await fetch(`api/update/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -51,10 +51,6 @@ const Kanban = ({ data }) => {
         const destItems = [...destColumn.items];
         const [removed] = sourceItems.splice(source.index, 1);
         destItems.splice(destination.index, 0, removed);
-        await updateTask({
-          id: removed.id,
-          status: destColumn.title,
-        });
         setColumns({
           ...columns,
           [source.droppableId]: {
@@ -66,6 +62,13 @@ const Kanban = ({ data }) => {
             items: destItems,
           },
         });
+        await updateTask({
+          id: removed.id,
+          status: destColumn.title,
+        });
+        // if (!data.ok) {
+        // roll back
+        // }
       }
     } catch (error) {
       console.error(error);

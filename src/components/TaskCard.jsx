@@ -11,7 +11,7 @@ const TaskCard = ({ item, index }) => {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
           >
-            <div style={{ background: item.status.color, padding: 20 }}>
+            <div style={{ background: "#e0e0e0", padding: 20 }}>
               <p>{item.name}</p>
               <p>{item.status.status}</p>
               <p>{item.id}</p>
