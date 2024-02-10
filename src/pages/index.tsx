@@ -7,6 +7,14 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 const Board = dynamic(import("@/components/Board"));
 
+const VALID_STATUSES = [
+  "to do",
+  "in progress",
+  "in review",
+  "completed",
+  "done",
+];
+
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   try {
     const queryView = new URLSearchParams({ page: "0" }).toString();
@@ -50,7 +58,15 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
       const list = await listFetched.json();
 
-      return { props: { data, statuses: list.statuses, listName: list.name } };
+      return {
+        props: {
+          data,
+          statuses: list.statuses.filter(({ status }: any) =>
+            VALID_STATUSES.includes(status)
+          ),
+          listName: list.name,
+        },
+      };
     } else {
       return { props: { data: [], statuses: [] } };
     }
@@ -64,10 +80,6 @@ const Grid = styled.div`
   display: flex;
   gap: 50px;
   align-items: flex-start;
-`;
-const Scrollable = styled.div`
-  display: flex;
-  overflow: auto;
 `;
 
 const Us = styled.div`
@@ -87,6 +99,14 @@ const StatusRow = styled.div`
   top: 0;
   display: flex;
   gap: 50px;
+`;
+
+const StatusColumn = styled.div`
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+  height: 50px;
+  gap: 10px;
 `;
 
 const Column = styled.div`
@@ -132,7 +152,7 @@ export default function Home({
 
   // if (status === "authenticated") {
   return (
-    <div className="p-12">
+    <div className="p-12" style={{ overflow: "scroll" }}>
       <h2 style={{ fontSize: "4rem" }}>{listName}</h2>
       {/* <p>Signed in as {userName}</p> */}
       {/* <button onClick={() => signOut()}>Sign out</button> */}
@@ -141,9 +161,16 @@ export default function Home({
         <StatusRow>
           <EmptyColumn />
           {statuses.map((status: any, i: number) => (
-            <Column key={status.id + i} style={{ background: status.color }}>
-              {status.status}
-            </Column>
+            <StatusColumn key={status.id + i}>
+              <div
+                style={{
+                  backgroundColor: status.color,
+                  width: 30,
+                  height: "100%",
+                }}
+              />
+              <p>{status.status}</p>
+            </StatusColumn>
           ))}
         </StatusRow>
 
@@ -151,7 +178,7 @@ export default function Home({
           const group = statuses.reduce((acc: any, { status, id }: any) => {
             acc[us.id + id] = {
               title: status,
-              items: us.subtasks.filter(
+              items: us?.subtasks?.filter(
                 (task: any) => task.status.status === status
               ),
             };
